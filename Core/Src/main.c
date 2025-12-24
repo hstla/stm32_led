@@ -18,9 +18,12 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "00_timer2.h"
 #include "01_led_delay.h"
 #include "02_led_timer.h"
 #include "03_led_pwm.h"
+#include "04_polling.h"
+#include "05_interrupt.h"
 
 /* Private variables ---------------------------------------------------------*/
 TIM_HandleTypeDef htim2;
@@ -43,9 +46,19 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM2_Init();
 
-//  led_delay_run();
-//  led_timer_run();
-  led_pwm_run();
+//  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+//	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+
+
+  timer2_run(); // TIM2 시작
+
+//  led_delay_run();      // 01
+//  led_timer_run();      // 02
+//  led_pwm_run();        // 03
+//  led_polling_run();    // 04
+
+  led_interrupt_run();  // 05
+
 
   while (1) {}
 }
@@ -214,7 +227,9 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin : B1_Pin */
   GPIO_InitStruct.Pin = B1_Pin;
+//  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
@@ -233,7 +248,8 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
-
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
   /* USER CODE END MX_GPIO_Init_2 */
 }
 
