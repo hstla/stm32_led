@@ -35,8 +35,8 @@ void gpio_register_run(void)
 	GPIOA_MODER |= (0x1U << (LD2_PIN * 2));
 
 	// PC13 내부 버튼 설정
-	GPIOC_MODER &= !(0x3U << (BTN_PIN * 2));
-	GPIOC_PUPDR &= !(0x3U << (BTN_PIN * 2));
+	GPIOC_MODER &= ~(0x3U << (BTN_PIN * 2));
+	GPIOC_PUPDR &= ~(0x3U << (BTN_PIN * 2));
 
 	while(1)
 	{

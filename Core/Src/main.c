@@ -25,6 +25,7 @@
 #include "04_polling.h"
 #include "05_interrupt.h"
 #include "06_register_control.h"
+#include "07_traffic_light.h"
 
 /* Private variables ---------------------------------------------------------*/
 TIM_HandleTypeDef htim2;
@@ -42,23 +43,24 @@ static void MX_TIM2_Init(void);
   */
 int main(void)
 {
-//  HAL_Init();
-//  SystemClock_Config();
-//  MX_GPIO_Init();
-//  MX_TIM2_Init();
+  HAL_Init();
+  SystemClock_Config();
+  MX_GPIO_Init();
+  MX_TIM2_Init();
 
 //  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
 //	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 
-//  timer2_run(); // TIM2 시작
+  timer2_run(); // TIM2 시작
 
 //  led_delay_run();      // 01
 //  led_timer_run();      // 02
 //  led_pwm_run();        // 03
 //  led_polling_run();    // 04
 //  led_interrupt_run();  // 05
-  gpio_register_run();  // 06 베어메탈 코드이므로 HAL INIT 주석처리해야함
+//  gpio_register_run();  // 06 베어메탈 코드이므로 HAL INIT 주석처리해야함
+  traffic_light_run();
 
 
   while (1) {
