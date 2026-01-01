@@ -110,8 +110,15 @@ void traffic_light_run(void)
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
+	static uint32_t last_exti_time = 0;
+	uint32_t current_time = get_tim2_ms();
+
   if (GPIO_Pin == B1_Pin)
   {
-  	night_flag = true;
+  	if (current_time - last_exti_time > 200)
+  	{
+  		night_flag = true;
+  		last_exti_time = current_time;
+  	}
   }
 }
