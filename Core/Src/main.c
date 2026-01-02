@@ -60,7 +60,7 @@ int main(void)
 //  led_polling_run();    // 04
 //  led_interrupt_run();  // 05
 //  gpio_register_run();  // 06 베어메탈 코드이므로 HAL INIT 주석처리해야함
-  traffic_light_run();
+  traffic_light_run();    // 07
 
 
   while (1) {
