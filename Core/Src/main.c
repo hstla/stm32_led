@@ -18,6 +18,9 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
 #include "00_timer2.h"
 #include "01_led_delay.h"
 #include "02_led_timer.h"
@@ -26,16 +29,56 @@
 #include "05_interrupt.h"
 #include "06_register_control.h"
 #include "07_traffic_light.h"
+#include "tm1637.h"
+
+/* USER CODE END Includes */
+
+/* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN PTD */
+
+/* USER CODE END PTD */
+
+/* Private define ------------------------------------------------------------*/
+/* USER CODE BEGIN PD */
+
+/* USER CODE END PD */
+
+/* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
 TIM_HandleTypeDef htim2;
+
 UART_HandleTypeDef huart2;
+
+/* USER CODE BEGIN PV */
+
+/* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_TIM2_Init(void);
+/* USER CODE BEGIN PFP */
+
+/* USER CODE END PFP */
+
+/* Private user code ---------------------------------------------------------*/
+/* USER CODE BEGIN 0 */
+
+tm1637_t seg =
+  {
+      .seg_cnt  = 4,
+      .gpio_clk = TM1637_CLK_GPIO_Port,
+      .gpio_dat = TM1637_DIO_GPIO_Port,
+      .pin_clk  = TM1637_CLK_Pin,
+      .pin_dat = TM1637_DIO_Pin,
+  };
+
+/* USER CODE END 0 */
 
 /**
   * @brief  The application entry point.
@@ -43,16 +86,34 @@ static void MX_TIM2_Init(void);
   */
 int main(void)
 {
+
+  /* USER CODE BEGIN 1 */
+
+  /* USER CODE END 1 */
+
+  /* MCU Configuration--------------------------------------------------------*/
+
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
+
+  /* USER CODE BEGIN Init */
+  /* USER CODE END Init */
+
+  /* Configure the system clock */
   SystemClock_Config();
+
+  /* USER CODE BEGIN SysInit */
+  /* USER CODE END SysInit */
+
+  /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_TIM2_Init();
+	MX_USART2_UART_Init();
+	MX_TIM2_Init();
 
-//  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
-//	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
-
-
+  /* USER CODE BEGIN 2 */
   timer2_run(); // TIM2 시작
+  tm1637_init(&seg); // 4-digital display 초기화
+  tm1637_brightness(&seg, 1);
 
 //  led_delay_run();      // 01
 //  led_timer_run();      // 02
@@ -62,16 +123,17 @@ int main(void)
 //  gpio_register_run();  // 06 베어메탈 코드이므로 HAL INIT 주석처리해야함
   traffic_light_run();    // 07
 
+  /* USER CODE END 2 */
 
-  while (1) {
-//  	if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13) == GPIO_PIN_RESET)
-//  	{
-//  		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
-//  	} else
-//  	{
-//  		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
-//  	}
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+  while (1)
+  {
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
   }
+  /* USER CODE END 3 */
 }
 
 /**
@@ -236,11 +298,12 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6|GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_RESET);
 
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOC, TM1637_CLK_Pin|TM1637_DIO_Pin, GPIO_PIN_SET);
+
   /*Configure GPIO pin : B1_Pin */
   GPIO_InitStruct.Pin = B1_Pin;
-//  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
-
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
@@ -258,11 +321,20 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
+  /*Configure GPIO pins : TM1637_CLK_Pin TM1637_DIO_Pin */
+  GPIO_InitStruct.Pin = TM1637_CLK_Pin|TM1637_DIO_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
   /* USER CODE BEGIN MX_GPIO_Init_2 */
   HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
 	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
   /* USER CODE END MX_GPIO_Init_2 */
 }
+
+
 
 /* USER CODE BEGIN 4 */
 
